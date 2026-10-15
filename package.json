@@ -1,0 +1,14 @@
+{
+  "name": "avia",
+  "version": "1.0.0",
+  "description": "Avia — Saiba antes. Vá com confiança.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.3.0"
+  }
+}

@@ -1,0 +1,1521 @@
+/* ==========================================================================
+   AVIA — DESIGN SYSTEM & ESTILOS PRINCIPAIS (MVP)
+   Acessibilidade em primeiro lugar • WCAG 2.2 AA • Saiba antes. Vá com confiança.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS (CUSTOM PROPERTIES)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Cores Principais */
+  --color-primary: #0F4C5C;        /* Verde-petróleo */
+  --color-primary-hover: #0b3844;
+  --color-accent: #F4A640;         /* Âmbar / Destaque de foco */
+  --color-bg: #FAF6EF;             /* Creme / Fundo principal */
+  --color-surface: #FFFFFF;        /* Branco puro para cards e inputs */
+  --color-text: #1B2A2F;           /* Tinta / Texto principal */
+  --color-border: #D9D2C5;         /* Borda suave */
+  --color-text-secondary: #4A5A60; /* Texto secundário */
+
+  /* Estados de Acessibilidade */
+  --color-available-bg: #E3F3EA;
+  --color-available-text: #14583A;
+  --color-barrier-bg: #FBE7E4;
+  --color-barrier-text: #8E2A20;
+  --color-unverified-bg: #EEF0F2;
+  --color-unverified-text: #3F4A53;
+  --color-unverified-border: #5A6670;
+
+  /* Aviso de Demonstração */
+  --color-demo-bg: #FFF1D6;
+  --color-demo-text: #6B4400;
+
+  /* Geometria e Raios de Borda */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Tipografia */
+  --font-heading: 'Sora', sans-serif;
+  --font-body: 'Atkinson Hyperlegible', sans-serif;
+
+  /* Espaçamentos e Alvos de Toque */
+  --min-touch-target: 44px;
+  --header-height: 64px;
+  --bottom-nav-height: 60px;
+
+  /* Sombras */
+  --shadow-sm: 0 2px 4px rgba(15, 76, 92, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 76, 92, 0.08);
+  --shadow-lg: 0 8px 24px rgba(15, 76, 92, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET E REGRAS BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+  margin-top: 0;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+p, ul, ol, dl, figure, blockquote {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+ul, ol {
+  padding-left: 1.5rem;
+}
+
+img, svg {
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   3. ACESSIBILIDADE E NAVEGAÇÃO POR TECLADO
+   -------------------------------------------------------------------------- */
+/* Alvos interativos com foco visível de alto contraste (WCAG 2.2 AA) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--color-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* Link para saltar diretamente para o conteúdo principal */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 0.2s ease-in-out;
+  box-shadow: var(--shadow-md);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Ocultar visualmente mantendo acessível para leitores de tela */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. AVISO DE DADOS DEMONSTRATIVOS (STICKY BANNER)
+   -------------------------------------------------------------------------- */
+.demo-banner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: var(--color-demo-bg);
+  color: var(--color-demo-text);
+  text-align: center;
+  z-index: 200;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.demo-banner span[aria-hidden="true"] {
+  font-size: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   5. CABEÇALHO E NAVEGAÇÃO PRINCIPAL (HEADER)
+   -------------------------------------------------------------------------- */
+.header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  width: 100%;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  box-sizing: border-box;
+}
+
+.header__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  min-height: var(--min-touch-target);
+  border-radius: var(--radius-sm);
+}
+
+.header__wordmark {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  text-transform: lowercase;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  min-height: var(--min-touch-target);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+  background-color: rgba(15, 76, 92, 0.06);
+}
+
+.nav-link.active,
+.nav-link[aria-current="page"] {
+  color: var(--color-primary);
+  background-color: rgba(15, 76, 92, 0.12);
+  font-weight: 700;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   6. BARRA DE NAVEGAÇÃO INFERIOR PARA DISPOSITIVOS MÓVEIS (BOTTOM NAV)
+   -------------------------------------------------------------------------- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px 8px;
+  z-index: 150;
+  box-shadow: 0 -3px 12px rgba(15, 76, 92, 0.08);
+}
+
+.bottom-nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  gap: 3px;
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.bottom-nav__link:hover {
+  color: var(--color-primary);
+}
+
+.bottom-nav__link.active,
+.bottom-nav__link[aria-current="page"] {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   7. ÁREA DE CONTEÚDO PRINCIPAL (MAIN)
+   -------------------------------------------------------------------------- */
+.main {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  padding-bottom: 80px;
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   8. TELA INICIAL (HOME SCREEN)
+   -------------------------------------------------------------------------- */
+.home {
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 24px;
+}
+
+.home__logo {
+  width: 80px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.home__slogan {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin: 16px 0 24px 0;
+  line-height: 1.3;
+}
+
+.search-box {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.search-box:focus-within {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.search-box__input {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  min-height: 48px;
+  color: var(--color-text);
+}
+
+.search-box__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
+.search-box__input:focus {
+  outline: none;
+}
+
+.search-box__btn {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  padding: 14px 24px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.search-box__btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.category-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 32px 0;
+}
+
+.category-chip {
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  padding: 10px 20px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.category-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: rgba(15, 76, 92, 0.05);
+}
+
+.preferences-summary {
+  margin: 24px auto;
+  max-width: 600px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.preferences-summary__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+
+.preferences-summary__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.preferences-summary__chip {
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preferences-summary__link {
+  font-size: 13px;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.preferences-summary__link:hover {
+  color: var(--color-primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   9. TELA DE PREFERÊNCIAS DE ACESSIBILIDADE (PREFERENCES)
+   -------------------------------------------------------------------------- */
+.preferences {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.preferences__header {
+  margin-bottom: 24px;
+}
+
+.preferences__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.preferences__intro {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.pref-category {
+  margin-bottom: 24px;
+}
+
+.pref-category__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pref-chips-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pref-chip {
+  border-radius: var(--radius-pill);
+  padding: 12px 24px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+}
+
+.pref-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pref-chip--selected {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.pref-chip--selected:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #FFFFFF;
+}
+
+.pref-notice {
+  background-color: var(--color-demo-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 24px;
+  color: var(--color-demo-text);
+  font-size: 14px;
+  line-height: 1.5;
+  border-left: 4px solid var(--color-accent);
+}
+
+.pref-save-btn {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 14px 32px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 24px;
+  cursor: pointer;
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.pref-save-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   10. TELA DE RESULTADOS DA BUSCA (RESULTS SCREEN)
+   -------------------------------------------------------------------------- */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.results-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.results-count {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.results-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  align-items: center;
+}
+
+.filter-chip {
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filter-chip--active {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
+}
+
+.filter-chip--active:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #FFFFFF;
+}
+
+.sort-select {
+  appearance: auto;
+  -webkit-appearance: auto;
+  padding: 10px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 15px;
+  min-height: var(--min-touch-target);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.sort-select:hover {
+  border-color: var(--color-primary);
+}
+
+/* Card do Estabelecimento */
+.place-card {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  position: relative;
+}
+
+.place-card:hover {
+  box-shadow: 0 6px 16px rgba(15, 76, 92, 0.12);
+  transform: translateY(-2px);
+}
+
+.place-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.place-card__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.place-card__category {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.place-card__meta {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 4px 0 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+}
+
+.place-card__distance {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.place-card__counts {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Emblemas de Contagem de Itens */
+.count-badge {
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.count-badge--available {
+  background-color: var(--color-available-bg);
+  color: var(--color-available-text);
+}
+
+.count-badge--barrier {
+  background-color: var(--color-barrier-bg);
+  color: var(--color-barrier-text);
+}
+
+.count-badge--unverified {
+  background-color: var(--color-unverified-bg);
+  color: var(--color-unverified-text);
+  border: 2px dashed var(--color-unverified-border);
+}
+
+/* Estado Vazio */
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  margin: 24px 0;
+}
+
+.empty-state__icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.empty-state__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.empty-state__desc {
+  font-size: 15px;
+  max-width: 420px;
+  margin: 0 auto 16px auto;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   11. TELA DE DETALHES DO LOCAL (PLACE DETAIL SCREEN)
+   -------------------------------------------------------------------------- */
+.place-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.place-detail__header {
+  margin-bottom: 24px;
+}
+
+.place-detail__category {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
+
+.place-detail__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.place-detail__meta {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.place-detail__description {
+  margin: 16px 0;
+  line-height: 1.6;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+/* Seções por Categoria de Necessidade */
+.need-section {
+  margin: 24px 0;
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.need-section__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 8px 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.item-row--available {
+  background-color: var(--color-available-bg);
+  color: var(--color-available-text);
+}
+
+.item-row--barrier {
+  background-color: var(--color-barrier-bg);
+  color: var(--color-barrier-text);
+}
+
+.item-row--unverified {
+  background-color: var(--color-unverified-bg);
+  color: var(--color-unverified-text);
+  border: 2px dashed var(--color-unverified-border);
+}
+
+.item-row__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.item-row__text {
+  flex: 1;
+}
+
+.item-row__source {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Botões de Ação na Tela de Detalhes */
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin: 28px 0;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 12px 26px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  min-height: var(--min-touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(15, 76, 92, 0.08);
+  color: var(--color-primary);
+}
+
+/* Avaliações Comunitárias */
+.reviews-section {
+  margin-top: 36px;
+  border-top: 2px solid var(--color-border);
+  padding-top: 24px;
+}
+
+.reviews-section__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+
+.review-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.review-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-card__author {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.review-card__date {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.review-card__comment {
+  margin-top: 8px;
+  line-height: 1.5;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.review-card__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   12. FORMULÁRIO DE AVALIAÇÃO COLABORATIVA (REVIEW FORM SCREEN)
+   -------------------------------------------------------------------------- */
+.review-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.review-form__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.review-form__place-name {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin: 20px 0;
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 16px;
+  min-height: var(--min-touch-target);
+  box-sizing: border-box;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 16px;
+  min-height: 100px;
+  box-sizing: border-box;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color 0.2s ease;
+}
+
+.form-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.need-review-group {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: var(--color-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.need-review-group__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--min-touch-target);
+  background-color: var(--color-surface);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+}
+
+.radio-option:hover {
+  border-color: var(--color-primary);
+}
+
+.radio-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Estilos de seleção dos botões de rádio conforme o status */
+.radio-option--selected-available,
+.radio-option:has(input[value="available"]:checked) {
+  background-color: var(--color-available-bg);
+  color: var(--color-available-text);
+  border-color: var(--color-available-text);
+}
+
+.radio-option--selected-barrier,
+.radio-option:has(input[value="barrier"]:checked) {
+  background-color: var(--color-barrier-bg);
+  color: var(--color-barrier-text);
+  border-color: var(--color-barrier-text);
+}
+
+.radio-option--selected-unknown,
+.radio-option:has(input[value="unknown"]:checked) {
+  background-color: var(--color-unverified-bg);
+  color: var(--color-unverified-text);
+  border-color: var(--color-unverified-border);
+}
+
+.form-error {
+  color: var(--color-barrier-text);
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.form-success {
+  background-color: var(--color-available-bg);
+  color: var(--color-available-text);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  margin: 16px 0;
+  font-weight: 700;
+  border: 1px solid var(--color-available-text);
+}
+
+/* --------------------------------------------------------------------------
+   13. TELA DE ROTA ACESSÍVEL (ROUTE SCREEN)
+   -------------------------------------------------------------------------- */
+.route-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.route-results {
+  margin-top: 24px;
+}
+
+.route-summary {
+  display: flex;
+  gap: 24px;
+  background-color: var(--color-bg);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  border: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.route-summary__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.route-summary__label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+.route-summary__value {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--color-primary);
+}
+
+.route-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.route-step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--color-primary);
+  margin-left: 14px;
+  margin-bottom: 12px;
+  position: relative;
+  background-color: var(--color-surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.route-step::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 18px;
+  width: 13px;
+  height: 13px;
+  background-color: var(--color-primary);
+  border: 2px solid #FFFFFF;
+  border-radius: 50%;
+}
+
+.route-step__instruction {
+  font-size: 15px;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.route-step__detail {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.route-step__alert {
+  background-color: var(--color-barrier-bg);
+  color: var(--color-barrier-text);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.route-map {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 24px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.route-map svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.route-notice {
+  background-color: var(--color-demo-bg);
+  color: var(--color-demo-text);
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin-top: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   14. CLASSES UTILITÁRIAS
+   -------------------------------------------------------------------------- */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
+
+.mt-32 {
+  margin-top: 32px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVIDADE (MEDIA QUERIES)
+   -------------------------------------------------------------------------- */
+/* Dispositivos Móveis e Tablets Pequenos (<= 768px) */
+@media (max-width: 768px) {
+  .header__nav {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  .main {
+    padding-bottom: 90px;
+  }
+
+  .home__logo {
+    width: 64px;
+  }
+
+  .home__slogan {
+    font-size: 1.3rem;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .place-card__counts {
+    flex-wrap: wrap;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+
+  .detail-actions .btn-primary,
+  .detail-actions .btn-secondary {
+    width: 100%;
+  }
+
+  .route-summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Desktop e Telas Médias/Grandes (>= 769px) */
+@media (min-width: 769px) {
+  .header__nav {
+    display: flex;
+  }
+
+  .bottom-nav {
+    display: none;
+  }
+
+  .header {
+    padding: 12px 32px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. IMPRESSÃO (PRINT STYLES)
+   -------------------------------------------------------------------------- */
+@media print {
+  .demo-banner,
+  .header,
+  .bottom-nav,
+  .skip-link,
+  .detail-actions,
+  .category-shortcuts,
+  .search-box__btn,
+  .results-filters,
+  .sort-select {
+    display: none !important;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .place-card {
+    border-color: #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. REDUÇÃO DE MOVIMENTO (PREFERS-REDUCED-MOTION)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
