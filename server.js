@@ -18,6 +18,17 @@ app.use(express.json());
 // Arquivos estáticos da pasta public
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Endpoint de saúde para monitoramento (ex: Render / Uptime)
+app.get('/api/health', (req, res) => {
+  try {
+    const db = getDb();
+    const count = db.prepare('SELECT COUNT(*) as count FROM places').get().count;
+    return res.json({ status: 'ok', placesCount: count });
+  } catch (err) {
+    return res.status(500).json({ status: 'error', error: err.message });
+  }
+});
+
 // Função utilitária para sanitização de strings (escape HTML)
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
@@ -117,8 +128,14 @@ app.get('/api/places', (req, res) => {
     }
 
     if (category && typeof category === 'string' && category.trim().length > 0) {
-      sql += ' AND LOWER(category) = LOWER(?)';
-      params.push(category.trim());
+      const catTrim = category.trim().toLowerCase();
+      const normalizedCat = catTrim.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (normalizedCat === 'estadio') {
+        sql += " AND (LOWER(category) = 'estádio' OR LOWER(category) = 'estadio')";
+      } else {
+        sql += ' AND LOWER(category) = ?';
+        params.push(catTrim);
+      }
     }
 
     if (needList && needList.length > 0) {
@@ -154,7 +171,10 @@ app.get('/api/places', (req, res) => {
     return res.json(result);
   } catch (err) {
     console.error('Erro ao buscar locais:', err);
-    return res.status(500).json({ error: 'Erro interno do servidor ao buscar locais.' });
+    return res.status(500).json({
+      error: 'Erro interno do servidor ao buscar locais.',
+      details: err.message
+    });
   }
 });
 
@@ -220,7 +240,10 @@ app.get('/api/places/:id', (req, res) => {
     });
   } catch (err) {
     console.error('Erro ao buscar detalhes do local:', err);
-    return res.status(500).json({ error: 'Erro interno do servidor ao buscar detalhes do local.' });
+    return res.status(500).json({
+      error: 'Erro interno do servidor ao buscar detalhes do local.',
+      details: err.message
+    });
   }
 });
 
@@ -370,7 +393,10 @@ app.post('/api/places/:id/reviews', (req, res) => {
     return res.status(201).json(newReview);
   } catch (err) {
     console.error('Erro ao registrar avaliação:', err);
-    return res.status(500).json({ error: 'Erro interno do servidor ao criar avaliação.' });
+    return res.status(500).json({
+      error: 'Erro interno do servidor ao criar avaliação.',
+      details: err.message
+    });
   }
 });
 
@@ -474,7 +500,10 @@ app.get('/api/route', (req, res) => {
     });
   } catch (err) {
     console.error('Erro ao gerar rota:', err);
-    return res.status(500).json({ error: 'Erro interno do servidor ao traçar rota.' });
+    return res.status(500).json({
+      error: 'Erro interno do servidor ao traçar rota.',
+      details: err.message
+    });
   }
 });
 
@@ -485,8 +514,16 @@ app.use((req, res) => {
 
 // Inicialização do servidor
 if (require.main === module) {
+  try {
+    const db = getDb();
+    const count = db.prepare('SELECT COUNT(*) as count FROM places').get().count;
+    console.log(`[avia] Banco de dados pronto. Total de locais disponíveis: ${count}`);
+  } catch (dbErr) {
+    console.error('[avia] Erro ao pré-inicializar banco de dados no boot:', dbErr);
+  }
+
   app.listen(PORT, () => {
-    console.log(`Servidor Avia rodando na porta ${PORT}`);
+    console.log(`[avia] Servidor Avia rodando na porta ${PORT}`);
   });
 }
 

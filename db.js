@@ -1,5 +1,7 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 let dbInstance = null;
 
@@ -422,25 +424,64 @@ function seedDatabase(db) {
   seedTransaction();
 }
 
+function initDatabase(targetPath) {
+  const db = new Database(targetPath);
+
+  try {
+    db.pragma('journal_mode = WAL');
+  } catch (err) {
+    console.warn(`[db] Aviso: Não foi possível ativar modo WAL (${err.message}). Utilizando modo DELETE.`);
+    try {
+      db.pragma('journal_mode = DELETE');
+    } catch (_) {}
+  }
+
+  db.pragma('foreign_keys = ON');
+  db.exec(schema);
+
+  const placeCount = db.prepare('SELECT COUNT(*) as count FROM places').get().count;
+  if (placeCount === 0) {
+    console.log('[db] Banco de dados vazio. Executando seed inicial...');
+    seedDatabase(db);
+    console.log('[db] Seed inicial concluído.');
+  }
+
+  return db;
+}
+
 function getDb(customPath) {
   if (dbInstance) {
     return dbInstance;
   }
 
-  const dbPath = customPath || path.resolve(__dirname, 'avia.db');
-  dbInstance = new Database(dbPath);
-
-  dbInstance.pragma('journal_mode = WAL');
-  dbInstance.pragma('foreign_keys = ON');
-
-  dbInstance.exec(schema);
-
-  const placeCount = dbInstance.prepare('SELECT COUNT(*) as count FROM places').get().count;
-  if (placeCount === 0) {
-    seedDatabase(dbInstance);
+  const explicitPath = customPath || process.env.DB_PATH;
+  if (explicitPath) {
+    dbInstance = initDatabase(explicitPath);
+    return dbInstance;
   }
 
-  return dbInstance;
+  const localPath = path.resolve(__dirname, 'avia.db');
+
+  try {
+    const db = initDatabase(localPath);
+    dbInstance = db;
+    return dbInstance;
+  } catch (primaryErr) {
+    console.warn(`[db] Falha ao abrir banco local em ${localPath} (${primaryErr.message}). Tentando fallback em diretório temporário...`);
+    const tmpPath = path.join(os.tmpdir(), 'avia.db');
+    try {
+      if (fs.existsSync(localPath) && !fs.existsSync(tmpPath)) {
+        fs.copyFileSync(localPath, tmpPath);
+        console.log(`[db] Cópia do banco pré-existente para ${tmpPath} realizada.`);
+      }
+    } catch (copyErr) {
+      console.warn(`[db] Não foi possível copiar banco existente para ${tmpPath}: ${copyErr.message}`);
+    }
+
+    const db = initDatabase(tmpPath);
+    dbInstance = db;
+    return dbInstance;
+  }
 }
 
 module.exports = {
