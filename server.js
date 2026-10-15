@@ -23,9 +23,9 @@ app.get('/api/health', (req, res) => {
   try {
     const db = getDb();
     const count = db.prepare('SELECT COUNT(*) as count FROM places').get().count;
-    return res.json({ status: 'ok', placesCount: count });
+    return res.json({ status: 'ok', nodeVersion: process.version, placesCount: count });
   } catch (err) {
-    return res.status(500).json({ status: 'error', error: err.message });
+    return res.status(500).json({ status: 'error', nodeVersion: process.version, error: err.message });
   }
 });
 

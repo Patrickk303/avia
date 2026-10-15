@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "build": "npm rebuild better-sqlite3",
+    "postinstall": "npm rebuild better-sqlite3"
   },
   "dependencies": {
     "express": "^4.21.0",
